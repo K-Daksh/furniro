@@ -44,10 +44,10 @@ const ProductCard = ({
 
   const handleTouchStart = () => {
     pressTimeout.current = setTimeout(() => {
-      setPressed(true);
       if (navigator && navigator.vibrate) {
-        navigator.vibrate(200);
+        navigator.vibrate(10);
       }
+      setPressed(true);
     }, 500);
   };
 
@@ -80,13 +80,13 @@ const ProductCard = ({
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onTouchCancel={handleTouchEnd}
-      className="relative w-full max-w-[260px] mx-auto group"
+      className="relative w-full max-w-[260px] mx-auto"
     >
       {/* Hover Overlay */}
       <div
         className={`absolute inset-0 z-10 bg-black/60 ${
           pressed ? "opacity-100" : "opacity-0"
-        } group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-4 p-4`}
+        } transition-opacity duration-300 flex flex-col items-center justify-center gap-4 p-4`}
       >
         {/* Admin Actions */}
         <div className="flex gap-4">
