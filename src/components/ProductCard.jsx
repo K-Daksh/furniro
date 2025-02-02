@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
@@ -20,6 +20,41 @@ const ProductCard = ({
 }) => {
   const navigate = useNavigate();
 
+  const [pressed, setPressed] = useState(false);
+  const cardRef = useRef(null);
+  const pressTimeout = useRef(null);
+  const hideTimeout = useRef(null);
+
+  useEffect(() => {
+    if (pressed) {
+      const handleOutsideClick = (e) => {
+        if (cardRef.current && !cardRef.current.contains(e.target)) {
+          setPressed(false);
+        }
+      };
+      document.addEventListener("pointerdown", handleOutsideClick);
+      hideTimeout.current = setTimeout(() => setPressed(false), 3000);
+
+      return () => {
+        document.removeEventListener("pointerdown", handleOutsideClick);
+        clearTimeout(hideTimeout.current);
+      };
+    }
+  }, [pressed]);
+
+  const handleTouchStart = () => {
+    pressTimeout.current = setTimeout(() => {
+      setPressed(true);
+      if (navigator && navigator.vibrate) {
+        navigator.vibrate(200);
+      }
+    }, 500);
+  };
+
+  const handleTouchEnd = () => {
+    clearTimeout(pressTimeout.current);
+  };
+
   const handleClick = () => {
     navigate(`/product/${id}`);
   };
@@ -40,11 +75,19 @@ const ProductCard = ({
 
   return (
     <div
+      ref={cardRef}
       onClick={handleClick}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
       className="relative w-full max-w-[260px] mx-auto group"
     >
       {/* Hover Overlay */}
-      <div className="absolute inset-0 z-10 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-4 p-4">
+      <div
+        className={`absolute inset-0 z-10 bg-black/60 ${
+          pressed ? "opacity-100" : "opacity-0"
+        } group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-4 p-4`}
+      >
         {/* Admin Actions */}
         <div className="flex gap-4">
           <button

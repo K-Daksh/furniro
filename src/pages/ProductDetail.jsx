@@ -55,19 +55,19 @@ const ProductDetail = () => {
           <span className="text-black">{product.name}</span>
         </div>
       </div>
-      <div className="px-16 py-8 flex gap-16">
+      <div className="px-5 sm:px-16 py-8 flex flex-col sm:flex-row gap-8 sm:gap-16">
         <div
           style={{
             WebkitScrollSnapType: "y mandatory",
           }}
-          className="w-24 h-[400px] overflow-y-scroll no-scrollbar flex flex-col gap-4"
+          className="w-full sm:w-24 h-auto sm:h-[400px] overflow-y-scroll no-scrollbar flex items-center justify-center flex-row sm:flex-col gap-4"
         >
           {images.map((img, index) => (
             <img
               key={index}
               src={img}
               alt={`Thumbnail ${index + 1}`}
-              className={`w-[80px] h-[80px] object-cover cursor-pointer ${
+              className={`w-[60px] h-[60px] sm:h-[80px] sm:w-[80px] object-cover cursor-pointer ${
                 selectedImage === index ? "border-2 border-[#B88E2F]" : ""
               }`}
               onClick={() => setSelectedImage(index)}
@@ -75,7 +75,7 @@ const ProductDetail = () => {
           ))}
         </div>
         {/* Updated Main Image container and image styles */}
-        <div className="w-[300px] h-[400px] flex items-center justify-center bg-white">
+        <div className="w-full sm:w-[300px] h-[300px] sm:h-[400px] flex items-center justify-center bg-white">
           <div className="relative w-full h-full flex items-center justify-center">
             <img
               src={images[selectedImage]}
@@ -156,7 +156,7 @@ const ProductDetail = () => {
           </div>
 
           {/* Quantity and Actions */}
-          <div className="flex items-center gap-3 mb-8">
+          <div className="flex flex-col sm:flex-row items-center gap-3 mb-8">
             <div className="flex items-center border border-gray-300 rounded-lg">
               <button
                 className="px-2 py-3 cursor-pointer"
