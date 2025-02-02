@@ -16,7 +16,7 @@ const ProductCard = ({
   isNew,
   salePercentage,
   onUpdate,
-  onDelete,
+  onDelete, // new prop for delete functionality
 }) => {
   const navigate = useNavigate();
 

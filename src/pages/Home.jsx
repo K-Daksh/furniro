@@ -12,11 +12,17 @@ import sample3 from "./../assets/sample3.png";
 import ProductCard from "./../components/ProductCard";
 import Slider from "./../components/Slider";
 import ImageCollage from "./../components/ImageCollage";
+import ProductFormModal from "./../components/ProductFormModal"; // add if not already imported
+import { toast } from "react-toastify"; // if not already imported
 
 const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
+
+  // Add update state
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [isProductFormOpen, setIsProductFormOpen] = useState(false);
 
   useEffect(() => {
     const loadInitialData = async () => {
@@ -64,6 +70,59 @@ const Home = () => {
       .then(() => setIsLoading(false))
       .catch(() => setIsLoading(false));
   }, [products]);
+
+  // Add update handler
+  const handleUpdateProduct = (id) => {
+    setSelectedProductId(id);
+    setIsProductFormOpen(true);
+  };
+
+  // Replace the previous handleDeleteProduct with:
+  const handleDeleteProduct = (id) => {
+    toast.warn(
+      <div className="flex flex-col items-center">
+        <p className="font-semibold text-lg mb-2">Delete Product</p>
+        <p className="mb-1">Are you sure you want to delete this product?</p>
+        <p className="text-sm text-gray-500 mb-4">
+          This action cannot be undone.
+        </p>
+        <div className="flex justify-center gap-3 w-full">
+          <button
+            className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 min-w-[100px]"
+            onClick={() => toast.dismiss()}
+          >
+            Cancel
+          </button>
+          <button
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 min-w-[100px]"
+            onClick={async () => {
+              toast.dismiss();
+              try {
+                await axios.delete(`http://localhost:4000/furniture/${id}`);
+                toast.success("Product deleted successfully");
+                setProducts((prev) =>
+                  prev.filter((product) => product._id !== id)
+                );
+              } catch (error) {
+                console.log(error);
+                toast.error("Error deleting product");
+              }
+            }}
+          >
+            Delete
+          </button>
+        </div>
+      </div>,
+      {
+        position: "top-center",
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+        closeButton: true,
+        className: "w-96",
+      }
+    );
+  };
 
   return (
     <div className="bg-white min-h-screen w-full">
@@ -173,6 +232,9 @@ const Home = () => {
                 originalPrice={product.originalPrice}
                 isNew={product.isNew}
                 salePercentage={product.salePercentage}
+                // Pass update handler to allow editing from home page
+                onUpdate={handleUpdateProduct}
+                onDelete={handleDeleteProduct} // added delete functionality
               />
             ))}
           </div>
@@ -195,6 +257,21 @@ const Home = () => {
       {/* Replace the old setup sharing section with the new component */}
       <ImageCollage />
       <div className="h-[1.5px] w-full bg-gray-200 my-10"></div>
+
+      {/* Add update modal */}
+      <ProductFormModal
+        isOpen={isProductFormOpen}
+        onClose={() => {
+          setIsProductFormOpen(false);
+          setSelectedProductId(null);
+        }}
+        onSuccess={() => {
+          // Optionally, refresh products after update
+          setIsProductFormOpen(false);
+          setSelectedProductId(null);
+        }}
+        productId={selectedProductId}
+      />
 
       <Footer />
     </div>
