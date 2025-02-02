@@ -23,9 +23,8 @@ const ProductDetail = () => {
     const fetchProduct = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(
-          `http://localhost:4000/furniture/${id}`
-        );
+        const backendUrl = import.meta.env.VITE_BACKEND_URL;
+        const response = await axios.get(`${backendUrl}/furniture/${id}`);
         setProduct(response.data);
         setSelectedSize(response.data.sizes[0]);
         setSelectedColor(response.data.color[0]);

@@ -28,13 +28,11 @@ const Home = () => {
     const loadInitialData = async () => {
       setIsLoading(true);
       try {
-        // Fetch featured products
-        const response = await axios.get(
-          "http://localhost:4000/furniture/featured",
-          {
-            params: { limit: 8 },
-          }
-        );
+        // Access env variable using import.meta.env
+        const backendUrl = import.meta.env.VITE_BACKEND_URL;
+        const response = await axios.get(`${backendUrl}/furniture/featured`, {
+          params: { limit: 8 },
+        });
         setProducts(response.data);
       } catch (error) {
         console.error("Error fetching featured products:", error);
@@ -98,7 +96,8 @@ const Home = () => {
             onClick={async () => {
               toast.dismiss();
               try {
-                await axios.delete(`http://localhost:4000/furniture/${id}`);
+                const backendUrl = import.meta.env.VITE_BACKEND_URL;
+                await axios.delete(`${backendUrl}/furniture/${id}`);
                 toast.success("Product deleted successfully");
                 setProducts((prev) =>
                   prev.filter((product) => product._id !== id)

@@ -28,8 +28,9 @@ const FilterModal = ({ isOpen, onClose, onApplyFilters, initialFilters }) => {
   const fetchFilterOptions = async () => {
     setIsLoading(true);
     try {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL;
       const response = await axios.get(
-        "http://localhost:4000/furniture/filter-options"
+        `${backendUrl}/furniture/filter-options`
       );
       console.log(response);
       setFilterOptions(response.data);

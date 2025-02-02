@@ -69,7 +69,8 @@ const Shop = () => {
           : null;
       }
 
-      const response = await axios.get(`http://localhost:4000/furniture/all`, {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL;
+      const response = await axios.get(`${backendUrl}/furniture/all`, {
         params,
       });
 
@@ -133,7 +134,8 @@ const Shop = () => {
               toast.dismiss();
               setIsLoading(true);
               try {
-                await axios.delete(`http://localhost:4000/furniture/${id}`);
+                const backendUrl = import.meta.env.VITE_BACKEND_URL;
+                await axios.delete(`${backendUrl}/furniture/${id}`);
                 toast.success("Product deleted successfully", {
                   className: "text-center",
                 });

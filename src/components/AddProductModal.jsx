@@ -140,9 +140,9 @@ const AddProductModal = ({ isOpen, onClose, onProductAdded }) => {
           product[7].image,
         ], // New field for additional images
       };
-
+      const backendUrl = import.meta.env.VITE_BACKEND_URL;
       const response = await axios.post(
-        "http://localhost:4000/furniture/create",
+        `${backendUrl}/furniture/create`,
         productData
       );
 

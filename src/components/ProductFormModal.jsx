@@ -31,9 +31,8 @@ const ProductFormModal = ({ isOpen, onClose, onSuccess, productId = null }) => {
 
   const fetchProductData = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:4000/furniture/${productId}`
-      );
+      const backendUrl = import.meta.env.VITE_BACKEND_URL;
+      const response = await axios.get(`${backendUrl}/furniture/${productId}`);
       const product = response.data;
       setFormData({
         name: product.name,
@@ -116,8 +115,9 @@ const ProductFormModal = ({ isOpen, onClose, onSuccess, productId = null }) => {
 
       if (productId) {
         // Update existing product
+        const backendUrl = import.meta.env.VITE_BACKEND_URL;
         response = await axios.put(
-          `http://localhost:4000/furniture/${productId}`,
+          `${backendUrl}/furniture/${productId}`,
           formData
         );
         toast.success("Product updated successfully!", {
@@ -126,7 +126,8 @@ const ProductFormModal = ({ isOpen, onClose, onSuccess, productId = null }) => {
         });
       } else {
         // Create new product
-        response = await axios.post("http://localhost:4000/furniture/create", {
+        const backendUrl = import.meta.env.VITE_BACKEND_URL;
+        response = await axios.post(`${backendUrl}/furniture/create`, {
           ...formData,
           image: randomProduct.image,
           description: randomProduct.description,
