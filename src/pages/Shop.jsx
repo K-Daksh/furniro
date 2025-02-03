@@ -67,7 +67,7 @@ const Shop = () => {
     Object.keys(params).forEach(
       (key) => params[key] === undefined && delete params[key]
     );
-    setSearchParams(params);
+    setSearchParams(params, { replace: true }); // Use replace to avoid new history entries
   }, [sortBy, activeFilters, currentPage, itemsPerPage]);
 
   const fetchProducts = async (filtersParam = null) => {
