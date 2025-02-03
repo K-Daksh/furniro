@@ -80,6 +80,8 @@ const ProductCard = ({
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onTouchCancel={handleTouchEnd}
+      onMouseEnter={() => setPressed(true)} // added for hover state
+      onMouseLeave={() => setPressed(false)} // added for hover state
       className="relative w-full max-w-[260px] mx-auto"
     >
       {/* Hover Overlay */}

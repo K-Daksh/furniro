@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/Header";
 import BackgroundOverlay from "../components/BackgroundOverlay";
@@ -15,30 +15,25 @@ import ProductFormModal from "../components/ProductFormModal";
 
 const Shop = () => {
   const location = useLocation();
-  const [searchParams, setSearchParams] = useSearchParams();
-
   const pathnames = location.pathname.split("/").filter((x) => x);
-
-  // Read initial state from URL if available
-  const initialSort = searchParams.get("sort") || "default";
-  const initialFilters = searchParams.get("filters")
-    ? JSON.parse(searchParams.get("filters"))
-    : {}; // default to empty object instead of null
-  const initialPage = Number(searchParams.get("page")) || 1;
-  const initialLimit = Number(searchParams.get("limit")) || 16;
 
   const [products, setProducts] = useState([]);
   const [currentView, setCurrentView] = useState("grid");
-  const [sortBy, setSortBy] = useState(initialSort);
-  const [itemsPerPage, setItemsPerPage] = useState(initialLimit);
-  const [currentPage, setCurrentPage] = useState(initialPage);
+  const [sortBy, setSortBy] = useState("default");
+  const [itemsPerPage, setItemsPerPage] = useState(16);
+  const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [activeFilters, setActiveFilters] = useState(initialFilters);
+  const [activeFilters, setActiveFilters] = useState(null);
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
+
+  // Separate useEffect for initial load
+  useEffect(() => {
+    fetchProducts();
+  }, []); // Empty dependency array for initial load
 
   // Separate useEffect for filter/pagination changes
   useEffect(() => {
@@ -51,24 +46,6 @@ const Shop = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
-
-  // Update URL query parameters when these values change
-  useEffect(() => {
-    const params = {
-      sort: sortBy !== "default" ? sortBy : undefined,
-      filters:
-        activeFilters && Object.keys(activeFilters).length > 0
-          ? JSON.stringify(activeFilters)
-          : undefined,
-      page: currentPage !== 1 ? currentPage : undefined,
-      limit: itemsPerPage !== 16 ? itemsPerPage : undefined,
-    };
-    // Remove undefined keys
-    Object.keys(params).forEach(
-      (key) => params[key] === undefined && delete params[key]
-    );
-    setSearchParams(params, { replace: true }); // Use replace to avoid new history entries
-  }, [sortBy, activeFilters, currentPage, itemsPerPage]);
 
   const fetchProducts = async (filtersParam = null) => {
     setIsLoading(true);
@@ -215,7 +192,6 @@ const Shop = () => {
         isOpen={isFilterModalOpen}
         onClose={() => setIsFilterModalOpen(false)}
         onApplyFilters={handleApplyFilters}
-        initialFilters={activeFilters} // <<< Added prop to pass applied filters
       />
 
       <AddProductModal

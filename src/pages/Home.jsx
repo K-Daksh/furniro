@@ -64,9 +64,7 @@ const Home = () => {
           img.onerror = reject;
         });
       })
-    )
-      .then(() => setIsLoading(false))
-      .catch(() => setIsLoading(false));
+    );
   }, [products]);
 
   // Add update handler
