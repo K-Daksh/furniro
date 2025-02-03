@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/Header";
 import BackgroundOverlay from "../components/BackgroundOverlay";
@@ -15,25 +15,30 @@ import ProductFormModal from "../components/ProductFormModal";
 
 const Shop = () => {
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const pathnames = location.pathname.split("/").filter((x) => x);
+
+  // Read initial state from URL if available
+  const initialSort = searchParams.get("sort") || "default";
+  const initialFilters = searchParams.get("filters")
+    ? JSON.parse(searchParams.get("filters"))
+    : {}; // default to empty object instead of null
+  const initialPage = Number(searchParams.get("page")) || 1;
+  const initialLimit = Number(searchParams.get("limit")) || 16;
 
   const [products, setProducts] = useState([]);
   const [currentView, setCurrentView] = useState("grid");
-  const [sortBy, setSortBy] = useState("default");
-  const [itemsPerPage, setItemsPerPage] = useState(16);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [sortBy, setSortBy] = useState(initialSort);
+  const [itemsPerPage, setItemsPerPage] = useState(initialLimit);
+  const [currentPage, setCurrentPage] = useState(initialPage);
   const [totalItems, setTotalItems] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [activeFilters, setActiveFilters] = useState(null);
+  const [activeFilters, setActiveFilters] = useState(initialFilters);
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
-
-  // Separate useEffect for initial load
-  useEffect(() => {
-    fetchProducts();
-  }, []); // Empty dependency array for initial load
 
   // Separate useEffect for filter/pagination changes
   useEffect(() => {
@@ -46,6 +51,24 @@ const Shop = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
+
+  // Update URL query parameters when these values change
+  useEffect(() => {
+    const params = {
+      sort: sortBy !== "default" ? sortBy : undefined,
+      filters:
+        activeFilters && Object.keys(activeFilters).length > 0
+          ? JSON.stringify(activeFilters)
+          : undefined,
+      page: currentPage !== 1 ? currentPage : undefined,
+      limit: itemsPerPage !== 16 ? itemsPerPage : undefined,
+    };
+    // Remove undefined keys
+    Object.keys(params).forEach(
+      (key) => params[key] === undefined && delete params[key]
+    );
+    setSearchParams(params, { replace: true }); // Use replace to avoid new history entries
+  }, [sortBy, activeFilters, currentPage, itemsPerPage]);
 
   const fetchProducts = async (filtersParam = null) => {
     setIsLoading(true);
@@ -166,9 +189,10 @@ const Shop = () => {
     );
   };
 
+  if (isLoading) return <Spinner />;
+
   return (
     <div className="min-h-screen">
-      {isLoading && <Spinner />}
       <Header />
       <BackgroundOverlay
         imageUrl="https://s3-alpha-sig.figma.com/img/1461/f3d6/ff74c027a1888544144abe4be6e02cbf?Expires=1739145600&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=UTpJJv~2rXcCh54Z~6VeiUoNg7H3bjILOQriitB9LYF~qkf-qYLcoO5Fon9Yyo75HKkz8B0rCuTkcAnYm8j7-uqJGHMoLtbEoytlJcbXuWiPILXhCrMpYRap0u~to6kNTbllpyvTI81B2eeuhU~tmEDDmqw97qv0bUmm2EMJVBYgY~y43q5kAobR2leZ1qe9E~6I4WyJhA5Grf6tjKdq9B1ujX5~TMhj0FRYih7zubPOVvGwQRi4ONdlhhUWODRKSElXu1xAZqKwv9G5AMpA5W8W93euO-M1DDVCdppn0Ij-V5N~YR5oGvvapAJBZF23tOQrvq09U7hnCextjUfOlw__"
@@ -192,6 +216,7 @@ const Shop = () => {
         isOpen={isFilterModalOpen}
         onClose={() => setIsFilterModalOpen(false)}
         onApplyFilters={handleApplyFilters}
+        initialFilters={activeFilters} // <<< Added prop to pass applied filters
       />
 
       <AddProductModal
