@@ -60,7 +60,7 @@ const ImageCollage = () => {
       {/* Image Grid */}
       <div className="max-w-7xl mx-auto px-4 h-full w-auto">
         <div
-          className="absolute h-full flex flex-row justify-center items-center gap-5 transform scale-80 right-1/2"
+          className="absolute h-full flex flex-row justify-center items-center gap-5 transform scale-[80%] right-1/2"
           style={{
             top: "50%",
             left: "50%",
