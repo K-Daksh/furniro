@@ -1,8 +1,38 @@
-# React + Vite
+# React + Vite Furniture App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+Simple assignment for FOG
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Pages
+
+- **Home:** Displays featured products with update and delete options, a hero section, and a brief introduction.
+- **Shop:** Browse all products with filtering, sorting, and pagination.
+- **Product Detail:** View detailed information about a selected product.
+
+## Features
+
+- Server-side filtering and sorting that persists even on refresh.
+- Ability to set various filters (e.g. by price, brand, category) and sorting options for product listings.
+- Responsive design with a dynamic product update and delete functionality.
+- Integration with a backend hosted on Render that may require a few moments to spin up on first load.
+
+## Setup & Running
+
+1. Install dependencies:
+
+```
+npm install
+```
+
+2. Start the development server:
+
+```
+npm run dev
+```
+
+3. Open the browser at the provided local URL.
+
+```
+http://localhost:5173
+```
