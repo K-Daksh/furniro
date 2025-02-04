@@ -123,7 +123,7 @@ const Home = () => {
 
   return (
     <div className="bg-white min-h-screen w-full">
-      {isLoading && <Spinner />}
+      {isLoading && <Spinner home={true} />}
       <Header />
       {/* Hero Section */}
       <div
